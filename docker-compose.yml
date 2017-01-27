@@ -1,0 +1,56 @@
+# docker-compose.yml - Run services on Triton
+#
+# Parse Server will be:     http://parse.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com/parse
+# Parse Dashboard will be:  http://dashboard.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com/parse
+
+# Parse server
+parse:
+    extends:
+      file: common-services.yml
+      service: parse
+    ports:
+        - 80
+    environment:
+        - CONSUL_AGENT=1
+        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+    links:
+        - mongodb
+        - consul
+    labels:      
+        - triton.cns.services=parse
+
+# Parse dashboard
+parse-dashboard:
+    extends:
+      file: common-services.yml
+      service: parse-dashboard
+    ports:
+        - 80
+    environment:
+        - CONSUL_AGENT=1
+        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+        - PARSE_DASHBOARD_SERVER_URL=http://parse.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com/parse
+    links:
+        - parse
+        - consul
+    labels:      
+        - triton.cns.services=dashboard
+
+# MongoDB
+mongodb:
+    extends:
+      file: common-services.yml
+      service: mongodb
+    environment:
+        - CONSUL_AGENT=1
+        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+    links:
+        - consul
+
+# Consul
+consul:
+    extends:
+      file: common-services.yml
+      service: consul
+    labels:
+        - triton.cns.services=consul

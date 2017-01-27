@@ -1,0 +1,54 @@
+# common-services.yml
+
+# Parse server
+parse:
+    image: synchro/parse_ap
+    mem_limit: 512m
+    restart: always
+    ports:
+        - 80
+    environment:
+        - PORT=80
+        - PARSE_SERVER_APPLICATION_ID=${APPLICATION_ID}
+        - PARSE_SERVER_MASTER_KEY=${MASTER_KEY}
+        - PARSE_SERVER_DATABASE_URI=mongodb://mongodb/test
+        - PARSE_SERVER_URL=http://parse/parse
+        #- PARSE_SERVER_CLOUD_CODE_MAIN=
+
+# Parse dashboard
+parse-dashboard:
+    image: synchro/parse_dashboard_ap
+    mem_limit: 512m
+    restart: always
+    ports:
+        - 80
+    environment:
+        - PORT=80
+        - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=1
+        - PARSE_DASHBOARD_SERVER_URL=http://localhost:1337/parse
+        - PARSE_DASHBOARD_MASTER_KEY=${MASTER_KEY}
+        - PARSE_DASHBOARD_APP_ID=${APPLICATION_ID}
+        - PARSE_DASHBOARD_APP_NAME=MyApp
+        - PARSE_DASHBOARD_USER_ID=user1
+        - PARSE_DASHBOARD_USER_PASSWORD=pass
+
+# MongoDB
+mongodb:
+    image: synchro/mongodb_ap
+    command: containerpilot mongod --replSet=pilot
+    mem_limit: 4g
+    restart: always
+    mem_limit: 512m
+    ports:
+        - 27017
+
+# Consul
+consul:
+    image: progrium/consul:latest
+    mem_limit: 128m
+    command: -server -bootstrap -ui-dir /ui
+    restart: always
+    expose:
+        - 8500
+    dns:
+      - 127.0.0.1

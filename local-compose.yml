@@ -1,0 +1,47 @@
+# local-compose.yml - Run services on local host
+#
+# Parse Server will be:     http://localhost:1337/parse
+# Parse Dashboard will be:  http://localhost:8080
+
+# Parse server
+parse:
+    extends:
+      file: common-services.yml
+      service: parse
+    ports:
+        - 1337:80
+    environment:
+        - CONSUL=consul
+    links:
+        - mongodb
+        - consul
+
+# Parse dashboard
+parse-dashboard:
+    extends:
+      file: common-services.yml
+      service: parse-dashboard
+    ports:
+        - 8080:80
+    environment:
+        - CONSUL=consul
+        - PARSE_DASHBOARD_SERVER_URL=http://localhost:1337/parse
+    links:
+        - parse
+        - consul
+
+# MongoDB
+mongodb:
+    extends:
+      file: common-services.yml
+      service: mongodb
+    environment:
+        - CONSUL=consul
+    links:
+        - consul
+
+# Consul
+consul:
+    extends:
+      file: common-services.yml
+      service: consul
