@@ -12,6 +12,7 @@ parse:
         - 1337:80
     environment:
         - CONSUL=consul
+        - PARSE_SERVER_URL=http://localhost:1337/parse
     links:
         - mongodb
         - consul
@@ -35,6 +36,16 @@ mongodb:
     extends:
       file: common-services.yml
       service: mongodb
+    environment:
+        - CONSUL=consul
+    links:
+        - consul
+
+# Prometheus
+prometheus:
+    extends:
+      file: common-services.yml
+      service: prometheus
     environment:
         - CONSUL=consul
     links:

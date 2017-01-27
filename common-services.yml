@@ -12,7 +12,6 @@ parse:
         - PARSE_SERVER_APPLICATION_ID=${APPLICATION_ID}
         - PARSE_SERVER_MASTER_KEY=${MASTER_KEY}
         - PARSE_SERVER_DATABASE_URI=mongodb://mongodb/test
-        - PARSE_SERVER_URL=http://parse/parse
         #- PARSE_SERVER_CLOUD_CODE_MAIN=
 
 # Parse dashboard
@@ -25,7 +24,6 @@ parse-dashboard:
     environment:
         - PORT=80
         - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=1
-        - PARSE_DASHBOARD_SERVER_URL=http://localhost:1337/parse
         - PARSE_DASHBOARD_MASTER_KEY=${MASTER_KEY}
         - PARSE_DASHBOARD_APP_ID=${APPLICATION_ID}
         - PARSE_DASHBOARD_APP_NAME=MyApp
@@ -51,4 +49,12 @@ consul:
     expose:
         - 8500
     dns:
-      - 127.0.0.1
+        - 127.0.0.1
+
+# Prometheus
+prometheus:
+    image: autopilotpattern/prometheus:latest
+    mem_limit: 1g
+    restart: always
+    ports:
+        - 9090

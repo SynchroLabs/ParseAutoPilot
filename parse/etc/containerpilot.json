@@ -5,7 +5,7 @@
     {
       "name": "parse",
       "port": 80,
-      "health": "/usr/bin/curl -o /dev/null --fail -s http://localhost:80/health",
+      "health": "/usr/bin/curl -o /dev/null --fail -s http://localhost/parse/health",
       "poll": 10,
       "ttl": 25
     }

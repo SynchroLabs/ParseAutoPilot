@@ -13,10 +13,11 @@ parse:
     environment:
         - CONSUL_AGENT=1
         - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+        - PARSE_SERVER_URL=http://parse.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com/parse
     links:
         - mongodb
         - consul
-    labels:      
+    labels:
         - triton.cns.services=parse
 
 # Parse dashboard
@@ -33,7 +34,7 @@ parse-dashboard:
     links:
         - parse
         - consul
-    labels:      
+    labels:
         - triton.cns.services=dashboard
 
 # MongoDB
@@ -46,6 +47,19 @@ mongodb:
         - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
     links:
         - consul
+
+# Prometheus
+prometheus:
+    extends:
+      file: common-services.yml
+      service: prometheus
+    environment:
+        - CONSUL_AGENT=1
+        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+    links:
+        - consul
+    labels:
+        - triton.cns.services=prometheus
 
 # Consul
 consul:
