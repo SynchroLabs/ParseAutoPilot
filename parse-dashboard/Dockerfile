@@ -9,7 +9,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Pull project
-RUN git clone https://github.com/ParsePlatform/parse-dashboard.git /parse-dashboard
+RUN git clone --branch 1.0.22 --single-branch --depth 1  https://github.com/ParsePlatform/parse-dashboard.git /parse-dashboard
 
 WORKDIR /parse-dashboard
 

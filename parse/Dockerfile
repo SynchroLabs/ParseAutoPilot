@@ -9,7 +9,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Pull project
-RUN git clone https://github.com/ParsePlatform/parse-server.git /parse-server
+RUN git clone --branch 2.3.2 --single-branch --depth 1 https://github.com/ParsePlatform/parse-server.git /parse-server
 
 RUN mkdir -p /parse-server/config
 #VOLUME /parse-server/config
