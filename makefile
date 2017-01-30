@@ -23,9 +23,9 @@ build-redis:
 build-mongodb:
 	docker build -t synchro/parse_mongodb_ap mongodb
 
-# Start the composition on the local host
-runlocal:
-	docker-compose -f local-compose.yml up
+# Start the composition on Triton
+runtriton:
+	docker-compose -f triton-compose.yml up
 
 tag:
 	docker tag synchro/parse_ap synchro/parse_ap:${TAG}
