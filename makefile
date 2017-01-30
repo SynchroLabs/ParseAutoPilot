@@ -6,7 +6,10 @@ SHELL := /bin/bash
 TAG?=latest
 
 # Build the Docker containers
-build: build-parse build-dashboard build-mongodb
+build: build-nginx build-parse build-dashboard build-mongodb build-redis
+
+build-nginx:
+	docker build -t synchro/parse_nginx_ap nginx
 
 build-parse:
 	docker build -t synchro/parse_ap parse
@@ -14,8 +17,11 @@ build-parse:
 build-dashboard:
 	docker build -t synchro/parse_dashboard_ap parse-dashboard
 
+build-redis:
+	docker build -t synchro/parse_redis_ap redis
+
 build-mongodb:
-	docker build -t synchro/mongodb_ap mongodb
+	docker build -t synchro/parse_mongodb_ap mongodb
 
 # Start the composition on the local host
 runlocal:
@@ -28,9 +34,13 @@ tag:
 
 # Push our images to the public registry
 push:
+	docker push "synchro/parse_nginx_ap:${TAG}"
+	docker push "synchro/parse_nginx_ap:latest"
 	docker push "synchro/parse_ap:${TAG}"
 	docker push "synchro/parse_ap:latest"
 	docker push "synchro/parse_dashboard_ap:${TAG}"
 	docker push "synchro/parse_dashboard_ap:latest"
-	docker push "synchro/mongodb_ap:${TAG}"
-	docker push "synchro/mongodb_ap:latest"
+	docker push "synchro/parse_mongodb_ap:${TAG}"
+	docker push "synchro/parse_mongodb_ap:latest"
+	docker push "synchro/parse_redis_ap:${TAG}"
+	docker push "synchro/parse_redis_ap:latest"

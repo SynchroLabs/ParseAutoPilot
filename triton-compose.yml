@@ -1,0 +1,90 @@
+# docker-compose.yml - Run services on Triton
+#
+# Parse Server will be:     http://parse.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com/parse
+# Parse Dashboard will be:  http://dashboard.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com/parse
+
+# Nginx as a load-balancing tier and reverse proxy, with caching and optional SSL termination
+nginx:
+    extends:
+      file: common-services.yml
+      service: nginx
+    ports:
+        - 80
+        - 443
+        - 9090
+    environment:
+        - CONSUL_AGENT=1
+        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+    links:
+        - consul
+    labels:
+        - triton.cns.services=parse
+
+# Parse server
+parse:
+    extends:
+      file: common-services.yml
+      service: parse
+    environment:
+        - CONSUL_AGENT=1
+        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+        - PARSE_SERVER_URL=http://parse.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com/parse
+    links:
+        - mongodb
+        - consul
+
+# Parse dashboard
+parse-dashboard:
+    extends:
+      file: common-services.yml
+      service: parse-dashboard
+    environment:
+        - CONSUL_AGENT=1
+        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+        - PARSE_DASHBOARD_SERVER_URL=http://parse.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com/parse
+    links:
+        - parse
+        - consul
+
+# Redis
+redis:
+    extends:
+      file: common-services.yml
+      service: redis
+    environment:
+        - CONSUL_AGENT=1
+        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+    links:
+        - consul
+
+# MongoDB
+mongodb:
+    extends:
+      file: common-services.yml
+      service: mongodb
+    environment:
+        - CONSUL_AGENT=1
+        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+    links:
+        - consul
+
+# Prometheus
+prometheus:
+    extends:
+      file: common-services.yml
+      service: prometheus
+    environment:
+        - CONSUL_AGENT=1
+        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+    links:
+        - consul
+    labels:
+        - triton.cns.services=prometheus
+
+# Consul
+consul:
+    extends:
+      file: common-services.yml
+      service: consul
+    labels:
+        - triton.cns.services=consul

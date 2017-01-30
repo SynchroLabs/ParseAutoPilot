@@ -21,5 +21,24 @@
                   "-retry-interval", "10s"],
       "restarts": "unlimited"
     }{{ end }}
-  ]
+  ],
+  "telemetry": {
+    "port": 9090,
+    "sensors": [
+      {
+        "name": "parse_dashboard_memory_percent",
+        "help": "percentage of memory used",
+        "type": "gauge",
+        "poll": 5,
+        "check": ["/bin/sensor.sh", "memory"]
+      },
+      {
+        "name": "parse_dashboard_cpu_load",
+        "help": "cpu load",
+        "type": "gauge",
+        "poll": 5,
+        "check": ["/bin/sensor.sh", "cpu"]
+      }
+    ]
+  }
 }

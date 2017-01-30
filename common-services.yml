@@ -1,12 +1,24 @@
 # common-services.yml
 
+# Nginx as a load-balancing tier and reverse proxy, with caching and optional SSL termination
+nginx:
+    image: synchro/parse_nginx_ap
+    mem_limit: 128m
+    restart: always
+    ports:
+      - 80
+      - 443
+    expose:
+      - 9090
+
 # Parse server
 parse:
     image: synchro/parse_ap
     mem_limit: 512m
     restart: always
-    ports:
+    expose:
         - 80
+        - 9090
     environment:
         - PORT=80
         - PARSE_SERVER_APPLICATION_ID=${APPLICATION_ID}
@@ -19,8 +31,9 @@ parse-dashboard:
     image: synchro/parse_dashboard_ap
     mem_limit: 512m
     restart: always
-    ports:
+    expose:
         - 80
+        - 9090
     environment:
         - PORT=80
         - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=1
@@ -30,14 +43,23 @@ parse-dashboard:
         - PARSE_DASHBOARD_USER_ID=user1
         - PARSE_DASHBOARD_USER_PASSWORD=pass
 
+# Redis
+redis:
+    image: synchro/parse_redis_ap
+    mem_limit: 128m
+    restart: always
+    expose:
+        - 6379
+        - 26379
+
 # MongoDB
 mongodb:
-    image: synchro/mongodb_ap
+    image: synchro/parse_mongodb_ap
     command: containerpilot mongod --replSet=pilot
     mem_limit: 4g
     restart: always
     mem_limit: 512m
-    ports:
+    expose:
         - 27017
 
 # Consul

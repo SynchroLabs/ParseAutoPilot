@@ -2,28 +2,32 @@
 
 Implementation of [Parse](http://parse.com/) using the [AutoPilot pattern](https://www.joyent.com/blog/app-centric-micro-orchestration).
 
-Assuming you have a Docker environment, you can just do:
+This solution features an Nginx reverse proxy front-end that will redirect to both Parse Dashboard and Parse API server instances running in their own containers (and which will also provide a single point of TLS/SSL termination).  Parse API server instances connect to a MongoDB replica set and to a Redis cache.  The service directory that manages all of this is Consul.  All services make telemetry available to Prometheus.  All of these services run in their own containers.  Any and all of these containers can be scaled and all other containers will adjust automatically thanks to [ContainerPilot](https://www.joyent.com/containerpilot).
 
-    make build runlocal
+A Docker environment is required to build/run this solution.
 
-You should then have the Parse API server running at: http://localhost:1337/parse
+## Deploying Locally
 
-And the Parse Dashboard running at:  http://localhost:8080
+To build the containers:
 
-To deploy on Joyent Triton, make sure that your TRITON_ACCOUNT and TRITON_DC environment vars are set and that your Docker daemon is pointed to Triton, then you can just do a normal:
+    make build
+
+And to run the solution, you can just do:
 
     docker-compose up
 
-Your services will be available at your normal CNS addresses (as "parse" and "dashboard").
+You should then have the Parse Dashboard running at http://localhost:8080 and the Parse API server running at: http://localhost:8080/parse
 
-Before deploying anything publicly or to production you will want to update the APPLICATION_ID and MASTER_KEY values in .env, as well as enable (and require) SSL for both the Parse API server and Parse Dashboard.
+You can then scale any of the components as desired.  For high availability and failover support, MongoDb, Redis, and Consul should be scaled to a minimum of three instances each (and you should generally be running an odd number of each if scaling higher than three).
 
-TODO:
+## Deploying on Joyent Triton
 
-- [ ] Add Promethius telemetry to appropriate containers
-- [ ] Add Nginx to support reverse proxy TLS/SSL for Parse Server and Dashboard 
-- [ ] Add Parse Dashboard health check
-- [ ] Add Redis and configure Parse "Cache Adapter" to use same (no need for persistence)
-- [ ] Back up MongoDB to Manta (persistence)
-- [ ] Implement Parse "File Adapter" for Manta (so user files will be stored there instead of MongoDB)
-- [ ] Consider jumping on: https://github.com/ParsePlatform/parse-dashboard/issues/81 so that you can create/edit Cloud Code via the Parse Dashboard
+To deploy on Joyent Triton, make sure that your TRITON_ACCOUNT and TRITON_DC environment vars are set and that your Docker daemon is pointed to Triton, then you can just do a normal:
+
+    docker-compose -f triton-compose.yml up
+
+Your Parse services front-end will be available at your normal CNS addresses (as "parse").
+
+## Deploying to Production
+
+Before deploying anything publicly or to production you will want to update the APPLICATION_ID and MASTER_KEY values in you environment (or the .env file), as well as enable (and require) SSL in the Nginx config (which will terminated TLS/SSL for both the Parse API server and Parse Dashboard).

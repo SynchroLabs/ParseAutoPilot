@@ -1,20 +1,30 @@
 {
   "consul": "{{ if .CONSUL_AGENT }}localhost{{ else }}{{ .CONSUL }}{{ end }}:8500",
   "preStart": "/usr/local/bin/manage.sh preStart",
+  "logging": {
+    "level": "DEBUG",
+    "format": "text"
+  },
   "services": [
     {
-      "name": "parse",
+      "name": "nginx",
       "port": 80,
-      "health": "/usr/bin/curl -o /dev/null --fail -s http://localhost/parse/health",
+      "interfaces": ["eth1", "eth0"],
+      "health": "/usr/bin/curl -o /dev/null --fail -s http://localhost/health",
       "poll": 10,
       "ttl": 25
     }
   ],
   "backends": [
     {
-      "name": "mongodb",
+      "name": "parse",
       "poll": 5,
-      "onChange": "pkill -SIGHUP node"
+      "onChange": "/usr/local/bin/manage.sh onChange"
+    },
+    {
+      "name": "parse-dashboard",
+      "poll": 5,
+      "onChange": "/usr/local/bin/manage.sh onChange"
     }
   ],
   "coprocesses": [{{ if .CONSUL_AGENT }}
@@ -28,23 +38,23 @@
                   "-retry-interval", "10s"],
       "restarts": "unlimited"
     }{{ end }}
-  ],
+  ],    
   "telemetry": {
     "port": 9090,
     "sensors": [
       {
-        "name": "parse_api_memory_percent",
-        "help": "percentage of memory used",
+        "name": "nginx_connections_unhandled_total",
+        "help": "Number of accepted connections that were not handled",
         "type": "gauge",
         "poll": 5,
-        "check": ["/bin/sensor.sh", "memory"]
+        "check": ["/usr/local/bin/sensor.sh", "unhandled"]
       },
       {
-        "name": "parse_api_cpu_load",
-        "help": "cpu load",
+        "name": "nginx_connections_load",
+        "help": "Ratio of active connections (less waiting) to the maximum worker connections",
         "type": "gauge",
         "poll": 5,
-        "check": ["/bin/sensor.sh", "cpu"]
+        "check": ["/usr/local/bin/sensor.sh", "connections_load"]
       }
     ]
   }
