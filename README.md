@@ -22,7 +22,13 @@ And to run the solution, you can just do:
 
 You should then have the Parse Dashboard running at http://localhost:8080 and the Parse API server running at: http://localhost:8080/parse
 
-You can scale any of the components as desired.  For high availability and failover support, MongoDb, Redis, and Consul should be scaled to a minimum of three instances each (and you should generally be running an odd number of each if scaling higher than three).
+## Scaling
+
+You can scale any of the components as desired.  For example, to scale to two Parse API server containers and a three container mongoDB replica set, do:
+
+    docker-compose scale parse=2 mongodb=3
+
+ContainerPilot automatically handles letting Nginx know about the new Parse API Service container so it can load balance it with the existing one (all you do is scale, and ContainerPilot does the rest).  This works whether you are using docker-compose, Kubernetes, or any other scheduler.
 
 ## Deploying on Joyent Triton
 
@@ -34,8 +40,11 @@ Or for less typing:
 
     make runtriton
 
-Your Parse services front-end will be available the CNS address based on your TRITON environment vars (as "parse").
+Your Parse services front-end will be available at the CNS address based on your TRITON environment vars (as "parse").
 
 ## Deploying to Production
 
 Before deploying anything publicly or to production you will want to update the APPLICATION_ID and MASTER_KEY values in you environment (or the .env file), as well as enable (and require) SSL in the Nginx config (which will terminated TLS/SSL for both the Parse API server and Parse Dashboard).
+
+For high availability and failover support, MongoDb, Redis, and Consul should be scaled to a minimum of three instances each (and you should generally be running an odd number of each if scaling higher than three).
+
