@@ -1,7 +1,7 @@
-# docker-compose.yml - Run services on Triton
+# triton-compose.yml - Run services on Triton
 #
+# Parse Dashboard will be:  http://parse.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
 # Parse Server will be:     http://parse.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com/parse
-# Parse Dashboard will be:  http://dashboard.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com/parse
 
 # Nginx as a load-balancing tier and reverse proxy, with caching and optional SSL termination
 nginx:

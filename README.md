@@ -2,6 +2,8 @@
 
 Implementation of [Parse](http://parse.com/) using the [AutoPilot pattern](https://www.joyent.com/blog/app-centric-micro-orchestration).
 
+Docker Compose can be used to run the set of containers required to provide a complete Parse and Parse Dashboard solution, with no external configuration required.  You can also run this set of containers under the scheduler of your choice (Kubernetes, etc).
+
 This solution features an Nginx reverse proxy front-end that will redirect to both Parse API Server and Parse Dashboard instances running in their own containers.  Parse API Server instances connect to a mongoDB replica set and to a Redis cache.  The service directory that manages all of this is Consul.  All services make telemetry available to Prometheus.  All of the support services also run in their own containers.  Any and all of these containers can be scaled and all other containers will adjust automatically thanks to [ContainerPilot](https://www.joyent.com/containerpilot).
 
 You can run this in any Docker environment, but there is a custom composition for deployment on Joyent Triton that uses Triton Container Name Service (CNS) for load balancing Nginx and Triton Manta for mongoDB persistence (TBD).  When running on Triton, the architecture looks like this:
@@ -12,7 +14,7 @@ You can run this in any Docker environment, but there is a custom composition fo
 
 A Docker environment is required to build/run this solution.
 
-To build the containers:
+To build the containers locally:
 
     make build
 
