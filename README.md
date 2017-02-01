@@ -46,7 +46,7 @@ Your Parse services front-end will be available at the CNS address based on your
 
 ## Deploying to Production
 
-Before deploying anything publicly or to production you will want to update the APPLICATION_ID and MASTER_KEY values in you environment (or the .env file), as well as enable (and require) SSL in the Nginx config (which will terminated TLS/SSL for both the Parse API server and Parse Dashboard).
+Before deploying anything publicly or to production you will want to update the APPLICATION_ID and MASTER_KEY values in your environment (or the .env file), as well as enable (and require) SSL in the Nginx config (which will terminate TLS/SSL for both the Parse API server and Parse Dashboard).
 
 For high availability and failover support, MongoDb, Redis, and Consul should be scaled to a minimum of three instances each (and you should generally be running an odd number of each if scaling higher than three).
 
