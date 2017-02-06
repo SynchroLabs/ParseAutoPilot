@@ -30,14 +30,14 @@
         "help": "percentage of memory used",
         "type": "gauge",
         "poll": 5,
-        "check": ["/bin/sensor.sh", "memory"]
+        "check": ["/usr/local/bin/sensor.sh", "memory"]
       },
       {
         "name": "parse_dashboard_cpu_load",
         "help": "cpu load",
         "type": "gauge",
         "poll": 5,
-        "check": ["/bin/sensor.sh", "cpu"]
+        "check": ["/usr/local/bin/sensor.sh", "cpu"]
       }
     ]
   }

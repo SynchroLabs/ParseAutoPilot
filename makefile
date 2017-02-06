@@ -23,14 +23,21 @@ build-redis:
 build-mongodb:
 	docker build -t synchro/parse_mongodb_ap mongodb
 
+triton.env:
+	./setup.sh
+
 # Start the composition on Triton
-runtriton:
+runtriton: triton.env
+	$(eval include triton.env)
+	$(eval export $(shell sed 's/=.*//' triton.env))
 	docker-compose -f triton-compose.yml up
 
 tag:
 	docker tag synchro/parse_ap synchro/parse_ap:${TAG}
 	docker tag synchro/parse_dashboard_ap synchro/parse_dashboard_ap:${TAG}
-	docker tag synchro/mongodb_ap synchro/mongodb_ap:${TAG}
+	docker tag synchro/parse_nginx_ap synchro/parse_nginx_ap:${TAG}
+	docker tag synchro/parse_redis_ap synchro/parse_redis_ap:${TAG}
+	docker tag synchro/parse_mongodb_ap synchro/parse_mongodb_ap:${TAG}
 
 # Push our images to the public registry
 push:

@@ -11,14 +11,13 @@ nginx:
     ports:
         - 80
         - 443
-        - 9090
     environment:
         - CONSUL_AGENT=1
-        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+        - CONSUL=consul-${COMPOSE_PROJECT_NAME}.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
     links:
         - consul
     labels:
-        - triton.cns.services=parse
+        - triton.cns.services=${COMPOSE_PROJECT_NAME}
 
 # Parse server
 parse:
@@ -27,8 +26,8 @@ parse:
       service: parse
     environment:
         - CONSUL_AGENT=1
-        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
-        - PARSE_SERVER_URL=http://parse.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com/parse
+        - CONSUL=consul-${COMPOSE_PROJECT_NAME}.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+        - PARSE_SERVER_URL=http://${COMPOSE_PROJECT_NAME}.svc.${TRITON_ACCOUNT}.${TRITON_DC}.triton.zone/parse
     links:
         - mongodb
         - consul
@@ -40,8 +39,8 @@ parse-dashboard:
       service: parse-dashboard
     environment:
         - CONSUL_AGENT=1
-        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
-        - PARSE_DASHBOARD_SERVER_URL=http://parse.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com/parse
+        - CONSUL=consul-${COMPOSE_PROJECT_NAME}.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+        - PARSE_DASHBOARD_SERVER_URL=http://${COMPOSE_PROJECT_NAME}.svc.${TRITON_ACCOUNT}.${TRITON_DC}.triton.zone/parse
     links:
         - parse
         - consul
@@ -53,7 +52,7 @@ redis:
       service: redis
     environment:
         - CONSUL_AGENT=1
-        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+        - CONSUL=consul-${COMPOSE_PROJECT_NAME}.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
     links:
         - consul
 
@@ -64,7 +63,7 @@ mongodb:
       service: mongodb
     environment:
         - CONSUL_AGENT=1
-        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+        - CONSUL=consul-${COMPOSE_PROJECT_NAME}.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
     links:
         - consul
 
@@ -75,11 +74,11 @@ prometheus:
       service: prometheus
     environment:
         - CONSUL_AGENT=1
-        - CONSUL=consul.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
+        - CONSUL=consul-${COMPOSE_PROJECT_NAME}.svc.${TRITON_ACCOUNT}.${TRITON_DC}.cns.joyent.com
     links:
         - consul
     labels:
-        - triton.cns.services=prometheus
+        - triton.cns.services=prometheus-${COMPOSE_PROJECT_NAME}
 
 # Consul
 consul:
@@ -87,4 +86,4 @@ consul:
       file: common-services.yml
       service: consul
     labels:
-        - triton.cns.services=consul
+        - triton.cns.services=consul-${COMPOSE_PROJECT_NAME}

@@ -34,15 +34,11 @@ ContainerPilot automatically handles letting Nginx know about the new Parse API 
 
 ## Deploying on Joyent Triton
 
-To deploy on Joyent Triton, make sure that your TRITON_ACCOUNT and TRITON_DC environment vars are set and that your Docker daemon is pointed to Triton, then you can do:
-
-    docker-compose -f triton-compose.yml up
-
-Or for less typing:
+To deploy on Joyent Triton, first ensure that you have installed and configured the Triton CLI, then do:
 
     make runtriton
 
-Your Parse services front-end will be available at the CNS address based on your TRITON environment vars (as "parse").
+This will run setup.sh (if necessary) to set up your Joyent environment vars for use by Docker, and will then deploy the solution to Triton.  The Parse services will be available at http://parse.svc.${TRITON_ACCOUNT}.${TRITON_DC}.triton.zone (the Dashboard will be there, and the API server will be at /parse, as with local deployment).
 
 ## Deploying to Production
 
